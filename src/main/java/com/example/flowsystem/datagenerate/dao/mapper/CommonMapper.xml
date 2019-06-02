@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.flowsystem.datagenerate.dao.mapper.CommonMapper">
+
+    <update id="truncateTable">
+        truncate table ${tableName}
+    </update>
+
+    <insert id="insertStartDataOrigin">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into ${tableName}
+        (APP_CHANNEL, DEVICE_ID, DEVICE_HASHCODE, DEVICE_HASHCODE_IDX)
+        values
+        <foreach collection="list" item="startEntity" index="index" separator=",">
+            (#{startEntity.appChannel},#{startEntity.deviceId},#{startEntity.deviceHash},#{startEntity.deviceIdx})
+        </foreach>
+    </insert>
+
+    <select id="getStartDataByRem"
+            resultType="com.example.flowsystem.datagenerate.dto.request.StartRecordMapperRequest">
+        select APP_CHANNEL appChannel, DEVICE_ID deviceId from ${tableName}
+        where DEVICE_HASHCODE_IDX = #{rem}
+    </select>
+
+    <insert id="insertTables">
+        insert into ${tableName}
+        (APP_CHANNEL, DEVICE_ID)
+        values
+        <foreach collection="list" item="startEntity" index="index" separator=",">
+            (#{startEntity.appChannel},#{startEntity.deviceId})
+        </foreach>
+    </insert>
+
+    <insert id="insertStartDataBefore">
+        insert into ${tableName}
+        (APP_CHANNEL,DEVICE_ID,DEVICE_HASHCODE,DEVICE_HASHCODE_IDX)
+        select APP_CHANNEL,DEVICE_ID,DEVICE_HASHCODE,DEVICE_HASHCODE_IDX
+        from ${tableName} limit #{begin},5000
+    </insert>
+
+    <update id="dropTableIfExists">
+        drop table if exists ${tableName}
+    </update>
+
+    <update id="createAppStartTable">
+        CREATE TABLE ${tableName} (
+        `ID` int(10) NOT NULL AUTO_INCREMENT,
+        `APP_CHANNEL` varchar(20) NOT NULL,
+        `DEVICE_ID` varchar(40) NOT NULL,
+        PRIMARY KEY (`ID`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+    </update>
+
+</mapper>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.flowsystem.dataview.dao.mapper.ViewMapper">
+
+    <select id="getActiveCount" resultType="com.example.flowsystem.datagenerate.dto.response.ActiveChannelCount">
+        select app_channel appChannel, count(distinct device_id) activeCount from ${tableName}
+        group by app_channel
+    </select>
+
+</mapper>
